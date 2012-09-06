@@ -7,9 +7,7 @@ define(function (require) {
 	var helpers = require('./helpers'),
 		pipe = require('../lib/pipe');
 
-	console.debug('script run in context: ', this);
-
-	describe('iwc.pipe', function () {
+	describe('pipe', function () {
 
 		var localContextUri = window.location.toString().replace(/#.*$/, '');
 
@@ -38,13 +36,15 @@ define(function (require) {
 		});
 
 		describe('#open', function () {
-			var pipeFrameUri = localContextUri.replace('test.html', 'test/fixtures/pipeframe.html');
+			var pipeFrameUri = localContextUri.replace('test.html', 'fixtures/pipeframe.html');
 
-			it('should open pipe with default name and load external frame', function () {
-				var p = pipe.open(pipeFrameUri);
+			it.skip('should open pipe with default name and load external frame', function () {
+				var framesCount = window.frames.length,
+					p = pipe.open(pipeFrameUri);
 
 				expect(p.name).to.equal('default');
 				expect(p.context).to.be.an('undefined');
+				expect(window.frames.length).to.equal(framesCount + 1);
 			});
 
 			it.skip('should reuse existing frame', function () {

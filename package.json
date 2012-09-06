@@ -3,7 +3,7 @@
 	"description": "Inter-Window/Worker Communication suite to apply messaging patterns between browser windows/frames/web workers",
 	"version": "0.1.0",
 	"license": "MIT",
-	"main": "iwc.js",
+	"main": "index.js",
 	"heywords": [
 		"cross-domain",
 		"messaging",

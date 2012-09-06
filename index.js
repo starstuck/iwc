@@ -1,9 +1,8 @@
-/*global define, requirejs, window*/
+/*global define*/
 
 define(function (require) {
 	"use strict";
 
-	console.debug('Got context:', this);
 	return {
 		pipe: require('./lib/pipe')
 	};

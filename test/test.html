@@ -15,9 +15,15 @@
       ui: 'bdd',
       globals: ['recipient01', 'responder01']
     });
+    require.config({
+      paths: {
+        reqwest: "../node_modules/reqwest/reqwest"
+      }
+    });
     requirejs([
       './pipe_test',
-      './reqresp_test'
+      './reqresp_test',
+      './ajax_test'
     ], function() {
       mocha.run();
     });

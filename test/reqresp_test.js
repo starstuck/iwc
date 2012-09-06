@@ -6,7 +6,7 @@ define(function (require) {
 	var helpers = require('./helpers'),
 		reqresp = require('../lib/reqresp');
 
-	describe('idc.reqresp', function () {
+	describe('reqresp', function () {
 
 		it('should sent simple request and response', function (done) {
 			helpers.setupFrame(
