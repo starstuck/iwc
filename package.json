@@ -1,0 +1,40 @@
+{
+	"name": "iwc",
+	"description": "Inter-Window/Worker Communication suite to apply messaging patterns between browser windows/frames/web workers",
+	"version": "0.1.0",
+	"license": "MIT",
+	"main": "iwc.js",
+	"heywords": [
+		"cross-domain",
+		"messaging",
+		"message",
+		"pipe",
+		"request-response"
+	],
+	"author": "Tomasz Szarstuk <szarsti@gmail.com> (http://github.com/szarsti)",
+	"bugs": {
+		"url" : "http://github.com/szarsti/iwc/issues"
+	},
+	"repository": {
+		"type" : "git",
+		"url" : "http://github.com/szarsti/iwc.git"
+	},
+	"dependencies": {
+		"requirejs": "2.0.x"
+	},
+	"optionalDependencies": {
+		"reqwest": "0.4.x"
+	},
+	"devDependencies": {
+		"expect.js": "0.1.x",
+		"mocha": "1.4.x"
+	},
+	"scripts": {
+		"install": "rake",
+		"test": "rake test"
+	},
+	"engines": {
+		"browser": "*"
+	}
+}
+
