@@ -3,7 +3,6 @@
 	"description": "Inter-Window/Worker Communication suite to apply messaging patterns between browser windows/frames/web workers",
 	"version": "0.1.0",
 	"license": "MIT",
-	"main": "index.js",
 	"heywords": [
 		"cross-domain",
 		"messaging",
@@ -20,15 +19,16 @@
 		"url" : "http://github.com/szarsti/iwc.git"
 	},
 	"dependencies": {
-		"requirejs": "2.0.x"
-	},
-	"optionalDependencies": {
+		"almond": "0.1.x",
 		"reqwest": "0.4.x"
 	},
+	"optionalDependencies": {},
 	"devDependencies": {
+		"requirejs": "2.0.x",
 		"expect.js": "0.1.x",
 		"mocha": "1.4.x"
 	},
+	"main": "main.js",
 	"scripts": {
 		"install": "rake",
 		"test": "rake test"

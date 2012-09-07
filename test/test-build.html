@@ -2,11 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>IWC Test Suite</title>
+  <title>IWC Test Suite for Standalone Build</title>
   <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
 </head>
 <body>
   <div id="mocha"></div>
+  <script src="../iwc-all-debug.js"></script>
   <script src="../node_modules/mocha/mocha.js"></script>
   <script src="../node_modules/expect.js/expect.js"></script>
   <script src="../node_modules/requirejs/require.js"></script>
@@ -15,14 +16,13 @@
       ui: 'bdd',
       globals: ['recipient01', 'responder01']
     });
-    require.config({
-      paths: {
-        reqwest: "../node_modules/reqwest/reqwest"
-      }
-    });
+    // redefine exported bundled modules in requirejs
+    define('../lib/pipe', [], function(){ return iwc.pipe; });
+    define('../lib/reqresp', [], function(){ return iwc.reqresp; });
+    define('../lib/util/ajax', [], function(){ return iwc.util.ajax; });
     requirejs(['./suite'], function() {
       mocha.run();
     });
-  </script>
+  </script>  
 </body>
 </html>
