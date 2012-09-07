@@ -4,15 +4,19 @@
 define(function (require) {
 	"use strict";
 
-	var ajax = require('../lib/util/ajax');
+	var ajax = require('../lib/util/ajax'),
+		hostAlias = '127.0.0.1';
 
 	describe('util/ajax', function () {
-		it.skip('should make ajax call through proxy frame', function (done) {
+		it('should make ajax call through proxy frame', function (done) {
 			var path = location.pathname.replace(/[^\/]*.html$/, '');
-			ajax.get('//127.0.0.1' + path, function (resp) {
-				expect(resp.status).to.equal('200');
-				// TODO: test parsed json content
+			ajax.registerProxy('//' + hostAlias + path + 'fixtures/ajaxproxy.html');
+			ajax.get('//' + hostAlias + path + 'fixtures/data.json', function (resp) {
+				expect(resp.succeded).to.equal('OK');
+				done();
 			});
 		});
+
+		it.skip('should make same domain ajax requests straight away');
 	});
 });

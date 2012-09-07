@@ -1,5 +1,5 @@
 /*global define, describe, before, after, afterEach, it, expect, window, idc*/
-/*jslint nomen:true*/
+/*jslint nomen:true, regexp:true*/
 
 define(function (require) {
 	"use strict";
@@ -69,6 +69,20 @@ define(function (require) {
 			);
 		});
 
+		it('should auto-create frame and queue requests', function (done) {
+			var url = window.location.toString().replace(/[^\/]*.html$/, ''),
+				ping = reqresp.openRequestor(url + 'fixtures/pongframe.html#pong'),
+				result = [];
+
+			ping.request('Ping1', function (resp) { result.push(resp); });
+			ping.request('Ping2', function (resp) {
+				result.push(resp);
+				expect(result.toString()).to.equal(
+					'Ping1 1Pong!,Ping2 2Pong!'
+				);
+				done();
+			});
+		});
 
 		describe('ResponderEndPoint', function () {
 			var dummyResponder,

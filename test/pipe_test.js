@@ -1,4 +1,4 @@
-/*global define, describe, it, expect, window*/
+/*global define, describe, it, expect, before, window*/
 /*jslint nomen:true, regexp:true*/
 
 define(function (require) {
@@ -38,19 +38,55 @@ define(function (require) {
 		describe('#open', function () {
 			var pipeFrameUri = localContextUri.replace('test.html', 'fixtures/pipeframe.html');
 
-			it.skip('should open pipe with default name and load external frame', function () {
+			it('should open pipe with default name and load external frame', function (done) {
 				var framesCount = window.frames.length,
-					p = pipe.open(pipeFrameUri);
+					p = pipe.open(pipeFrameUri),
+					wFrames,
+					frame;
 
 				expect(p.name).to.equal('default');
 				expect(p.context).to.be.an('undefined');
-				expect(window.frames.length).to.equal(framesCount + 1);
+
+				wFrames = window.frames;
+				expect(wFrames.length).to.equal(framesCount + 1);
+
+				frame = wFrames[framesCount];
+				(function (listener) {
+					if (frame.addEventListener) {
+						frame.addEventListener('load', listener);
+					} else {
+						frame.attachEvent('onload', listener);
+					}
+				}(function () {
+					expect(frame.location.toString()).to.equal(pipeFrameUri);
+					done();
+				}));
 			});
 
 			it.skip('should reuse existing frame', function () {
 			});
 
-			it.skip('should queue messages and send when context is ready', function () {
+			it('should queue messages and send when context is ready', function (done) {
+				var p = pipe.open(localContextUri.replace('test.html', 'fixtures/logframe.html')),
+					contextSetter = p.setContext;
+
+				p.send('Message 1');
+				p.send('Message 2');
+				// Hack into context setter, so we can carry on after
+				// pipe recive full context. Maybe we should introduce
+				// pipe events
+				p.setContext = function (context) {
+					contextSetter.call(p, context);
+					// We need to do tests after some time, so browser
+					// has time to pass those messages
+					setTimeout(function () {
+						expect(p.queue).to.be.an('undefined');
+						expect(context.messageLog.toString()).to.equal(
+							'Message 1,Message 2'
+						);
+						done();
+					}, 15);
+				};
 			});
 		});
 
@@ -134,6 +170,10 @@ define(function (require) {
 				expect(pipeUri.contextUri).to.equal('http://www.example.com/');
 				expect(pipeUri.name).to.equal('custompipe');
 			});
+
+			it.skip('should recognise hostless absolute path');
+
+			it.skip('should recognise relative path');
 		});
 	});
 });

@@ -2,6 +2,15 @@
 <html><head>
   <script src="../../node_modules/requirejs/require.js"></script>
   <script>
-    requirejs(["../../lib/util/ajaxproxy.js"]);
+    require.config({
+      paths: {
+        reqwest: "../../node_modules/reqwest/reqwest"
+      }
+    });
+    requirejs(["../../lib/util/ajaxproxy.js"], function (ajaxproxy) {
+      ajaxproxy.init();
+    });
   </script>
-</head></html>
+</head>
+<body></body>
+</html>

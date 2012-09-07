@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset='utf-8'> 
+</head><body>
+  <script src="../../node_modules/requirejs/require.js"></script>
+  <script>
+    requirejs(['../../lib/pipe'], function (pipe) {
+      var log = window.messageLog = [];
+      pipe.addRecipient(function (msg) {
+        log.push(msg);
+      });
+    });
+  </script>
+</body></html>
