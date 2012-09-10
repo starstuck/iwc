@@ -1,9 +1,35 @@
-/*global define, document*/
+/*global define, document, location*/
 
 define(function (require) {
 	"use strict";
 
+	var hostAlias,
+		message;
+
+	try {
+		hostAlias = location.search.match(/(\?|&)alias=([\w\-.]+)(&|$)/)[2];
+	} catch (err) {}
+
+	// Use well known aliases for localhost
+	if (!hostAlias) {
+		switch (location.hostname) {
+		case ('localhost'):
+			hostAlias = '127.0.0.1';
+			break;
+		case ('127.0.0.1'):
+			hostAlias = 'localhost';
+			break;
+		}
+	}
+
 	return {
+		getHostAlias: function () {
+			if (!hostAlias) {
+				throw new Error('The test require host alias to make cross-domain request. Please provide ?alias= in url.');
+			}
+			return hostAlias;
+		},
+
 		/**
 		 * @param {String} script Script contetn which will be injected into created frame
 		 */

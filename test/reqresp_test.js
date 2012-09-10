@@ -70,7 +70,7 @@ define(function (require) {
 		});
 
 		it('should auto-create frame and queue requests', function (done) {
-			var url = window.location.toString().replace(/[^\/]*.html$/, ''),
+			var url = window.location.toString().replace(/[^\/]*.html(\?.*)?$/, ''),
 				ping = reqresp.openRequestor(url + 'fixtures/pongframe.html#pong'),
 				result = [];
 

@@ -32,8 +32,7 @@ define(function (require) {
 			};
 		});
 
-		it.skip('should not confuse local and remote recipients', function (done) {
-		});
+		it('should not confuse local and remote recipients');
 
 		describe('#open', function () {
 			var pipeFrameUri = localContextUri.replace('test.html', 'fixtures/pipeframe.html');
@@ -63,8 +62,7 @@ define(function (require) {
 				}));
 			});
 
-			it.skip('should reuse existing frame', function () {
-			});
+			it('should reuse existing frame');
 
 			it('should queue messages and send when context is ready', function (done) {
 				var p = pipe.open(localContextUri.replace('test.html', 'fixtures/logframe.html')),
@@ -171,9 +169,9 @@ define(function (require) {
 				expect(pipeUri.name).to.equal('custompipe');
 			});
 
-			it.skip('should recognise hostless absolute path');
+			it('should recognise hostless absolute path');
 
-			it.skip('should recognise relative path');
+			it('should recognise relative path');
 		});
 	});
 });
