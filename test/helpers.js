@@ -1,4 +1,5 @@
 /*global define, document, location*/
+/*jslint regexp:true*/
 
 define(function (require) {
 	"use strict";
@@ -35,7 +36,8 @@ define(function (require) {
 		 */
 		setupFrame: function (srcs, script, callback) {
 			var frame = document.createElement('iframe'),
-				frameDoc;
+				frameDoc,
+				baseUrl = location.toString().replace(/\w+\/\w+.html(\?|#|$).*/, '');
 
 			if (typeof script === 'function') {
 				script = script.toString();
@@ -50,20 +52,25 @@ define(function (require) {
 			frameDoc.open();
 			frameDoc.write([
 				'<html><head>',
-				'<script src="../node_modules/requirejs/require.js"></script>',
+				'</head><body>',
 				'<script>',
-				'  requirejs(',
-				'    [' + srcs.map(function (src) { return '"' + src + '"'; }).join(', ') + '],',
-				'    ' + script,
-				'  );',
+				'  function onRequirejsLoad() {',
+				'    requirejs(',
+				'      [' + srcs.map(function (src) { return '"' + src + '"'; }).join(', ') + '],',
+				'      ' + script,
+				'    );',
+				'  }',
 				'</script>',
-				'</head></html>'
+				'<script src="' + baseUrl + 'node_modules/requirejs/require.js" onload="onRequirejsLoad();"></script>',
+                '</body></html>'
 			].join('\n'));
 			frameDoc.close();
 
-			frame.addEventListener('load', function () {
-				callback(frame);
-			});
+			if (frame.addEventListener) {
+				frame.addEventListener('load', function () { callback(frame); });
+			} else {
+				frame.attachEvent('onload', function () { callback(frame); });
+			}
 
 			return frame;
 		},

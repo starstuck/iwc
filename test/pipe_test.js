@@ -12,6 +12,7 @@ define(function (require) {
 		var localContextUri = window.location.toString().replace(/#.*$/, '');
 
 		it('should setup pipe to send message to default recipient', function (done) {
+			console.info('Test start');
 			var frame = helpers.setupFrame(
 				['../lib/pipe.js'],
 				function (pipe) {
@@ -20,6 +21,7 @@ define(function (require) {
 					});
 				},
 				function (frame) {
+					console.log('Frame loaded');
 					pipe.open(frame.contentWindow).send('Single message');
 				}
 			);
