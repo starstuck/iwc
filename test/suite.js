@@ -5,7 +5,7 @@ define(function (require) {
 
 	// Tweak iwc for better test setup
 	try {
-		pipe.ignoreMessagePrefix('mocha-');
+		pipe.ignoreMessagePrefix('mocha-', 'testsuite-');
 	} catch(err) {}
 
 	require('./pipe_test');

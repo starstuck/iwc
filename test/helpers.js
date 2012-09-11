@@ -5,6 +5,7 @@ define(function (require) {
 	"use strict";
 
 	var hostAlias,
+		isScriptOnLoadSupported = (typeof document.getElementsByTagName('script')[0].onload !== 'undefined'),
 		message;
 
 	try {
@@ -37,6 +38,7 @@ define(function (require) {
 		setupFrame: function (srcs, script, callback) {
 			var frame = document.createElement('iframe'),
 				frameDoc,
+				frameWin,
 				baseUrl = location.toString().replace(/\w+\/\w+.html(\?|#|$).*/, '');
 
 			if (typeof script === 'function') {
@@ -48,30 +50,43 @@ define(function (require) {
 			frame.style.display = 'none';
 			frame.src = 'about:blank';
 			document.body.appendChild(frame);
-			frameDoc = frame.contentWindow.document;
+			frameWin = frame.contentWindow;
+			frameDoc = frameWin.document;
 			frameDoc.open();
 			frameDoc.write([
+				'<!DOCTYPE html>', //DOCTYPE is important for IE8 to work in W3C compatibility mode
 				'<html><head>',
-				'</head><body>',
+				'<script src="' + baseUrl + 'test/compat.js"></script>',
 				'<script>',
-				'  function onRequirejsLoad() {',
+				'  function onRequirejsLoad(script) {',
+				(isScriptOnLoadSupported ? '' : 'if (script.readyState !== "complete") { return; }'),
 				'    requirejs(',
 				'      [' + srcs.map(function (src) { return '"' + src + '"'; }).join(', ') + '],',
-				'      ' + script,
+				'      function() {',
+                '        (' + script + '.apply(window, arguments));',
+				'        postMessage("testsuite-frame-load", "' + location.protocol + '//' + location.hostname + '")',
+				'      }',
 				'    );',
 				'  }',
 				'</script>',
-				'<script src="' + baseUrl + 'node_modules/requirejs/require.js" onload="onRequirejsLoad();"></script>',
-                '</body></html>'
+				'<script src="' + baseUrl + 'node_modules/requirejs/require.js" ',
+				'        ' + (isScriptOnLoadSupported ? 'onload' : 'onreadystatechange') + '="onRequirejsLoad(this)">',
+				'</script>',
+                '</head></html>'
 			].join('\n'));
 			frameDoc.close();
 
-			if (frame.addEventListener) {
-				frame.addEventListener('load', function () { callback(frame); });
-			} else {
-				frame.attachEvent('onload', function () { callback(frame); });
+			function onFrameMessage(event) {
+				if (event.data === 'testsuite-frame-load') {
+					callback(frame);
+				}
 			}
 
+			if (frameWin.addEventListener) {
+				frameWin.addEventListener('message', onFrameMessage);
+			} else {
+				frameWin.attachEvent('onmessage', onFrameMessage);
+			}
 			return frame;
 		},
 

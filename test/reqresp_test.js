@@ -30,9 +30,9 @@ define(function (require) {
 		it('should should handle responses out of order', function (done) {
 			var result = [],
 				responseHandlers = [
-					function (r, c) { setTimeout(function () { c(r + ' 1Pong!'); }, 30); },
+					function (r, c) { setTimeout(function () { c(r + ' 1Pong!'); }, 45); },
 					function (r, c) { c(r + ' 2Pong!'); },
-					function (r, c) { setTimeout(function () { c(r + ' 3Pong!'); }, 15); },
+					function (r, c) { setTimeout(function () { c(r + ' 3Pong!'); }, 5); },
 				];
 
 			window.responder01 = function (req, callback) {
@@ -59,8 +59,8 @@ define(function (require) {
 							'3Ping! 3Pong!',
 							'1Ping! 1Pong!'
 						].join(', '));
-						delete window.responder01;
 						done();
+						window.responder01 = undefined;
 					});
 
 					requestor.request('2Ping!', respHandler);

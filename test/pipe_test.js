@@ -11,17 +11,15 @@ define(function (require) {
 
 		var localContextUri = window.location.toString().replace(/#.*$/, '');
 
-		it('should setup pipe to send message to default recipient', function (done) {
-			console.info('Test start');
+		it('should setup pipe and send message to default recipient', function (done) {
 			var frame = helpers.setupFrame(
 				['../lib/pipe.js'],
 				function (pipe) {
-					pipe.addRecipient(function (data, pipeEnd) {
-						window.parent.recipient01(data, pipeEnd);
+					pipe.addRecipient(function (data) {
+						window.parent.recipient01(data);
 					});
 				},
 				function (frame) {
-					console.log('Frame loaded');
 					pipe.open(frame.contentWindow).send('Single message');
 				}
 			);
@@ -29,8 +27,8 @@ define(function (require) {
 			window.recipient01 = function (message) {
 				expect(message).to.equal('Single message');
 				helpers.tearDownFrame(frame);
-				delete window.recipient01;
 				done();
+				window.recipient01 = undefined;
 			};
 		});
 
@@ -66,8 +64,9 @@ define(function (require) {
 
 			it('should reuse existing frame');
 
-			it('should queue messages and send when context is ready', function (done) {
-				var p = pipe.open(localContextUri.replace('test.html', 'fixtures/logframe.html')),
+			it('should queue messages and send when remote dispatcher is ready', function (done) {
+				var remoteUri = localContextUri.replace('test.html', 'fixtures/logframe.html'),
+					p = pipe.open(remoteUri),
 					contextSetter = p.setContext;
 
 				p.send('Message 1');
@@ -175,5 +174,6 @@ define(function (require) {
 
 			it('should recognise relative path');
 		});
+
 	});
 });
