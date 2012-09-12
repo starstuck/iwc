@@ -1,3 +1,5 @@
 /node_modules
 /iwc-all.js
 /iwc-all-debug.js
+/iwc-ajaxproxy.js
+/iwc-ajaxproxy-debug.js

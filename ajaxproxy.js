@@ -2,6 +2,8 @@
  * iwc 0.1.0 - A Inter-Window/Worker Communication suite.
  * Available via MIT license.
  * See http://github.com/szarsti/iwc for details.
+ *
+ * Self contained ajax proxy library
  */
 
 /*global define, requirejs, window*/
@@ -14,16 +16,14 @@ if (typeof define !== 'function') {
 define(function (require) {
 	"use strict";
 	return {
-		pipe: require('./lib/pipe'),
-		reqresp: require('./lib/reqresp'),
 		util: {
-			ajax: require('./lib/util/ajax')
+			ajaxproxy: require('./lib/util/ajaxproxy')
 		}
 	};
 });
 
 // If running in browser expose whole module in window namespace
 if (typeof window === 'object') {
-	window.iwc = require('main');
+	window.iwc = require('ajaxproxy');
 }
 
