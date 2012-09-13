@@ -7,7 +7,10 @@
   <script>
     requirejs(['../../lib/reqresp'], function (reqresp) {
       var counter = 0;
-      console.log('Responder initialised');
+      window.resetCounter = function() {
+        alert('reseting counter');
+        counter = 0;
+      };
       reqresp.openResponder('pong', function (req, callback) {
         callback(req + ' ' + (counter += 1) + 'Pong!');
       });

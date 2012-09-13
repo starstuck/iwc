@@ -11,42 +11,45 @@ define(function (require) {
 
 		var localContextUri = window.location.toString().replace(/#.*$/, '');
 
-		it('should setup pipe and send message to default recipient', function (done) {
-			var frame = helpers.setupFrame(
-				['../lib/pipe.js'],
-				function (pipe) {
-					pipe.addRecipient(function (data) {
-						window.parent.recipient01(data);
-					});
-				},
-				function (frame) {
-					pipe.open(frame.contentWindow).send('Single message');
-				}
-			);
+		describe('MessagePipe', function () {
+			it('should send message to default recipient', function (done) {
+				var frame = helpers.setupFrame(
+					['../lib/pipe.js'],
+					function (pipe) {
+						pipe.addRecipient(function (data) {
+							window.parent.recipient01(data);
+						});
+					},
+					function (frame) {
+						var p = pipe.open(frame.contentWindow);
 
-			window.recipient01 = function (message) {
-				expect(message).to.equal('Single message');
-				helpers.tearDownFrame(frame);
-				done();
-				window.recipient01 = undefined;
-			};
+						expect(p.name).to.equal('default');
+						p.send('Single message');
+					}
+				);
+
+				window.recipient01 = function (message) {
+					expect(message).to.equal('Single message');
+					helpers.tearDownFrame(frame);
+					done();
+					window.recipient01 = undefined;
+				};
+			});
+
+			it('should deliver remote messages to local steal recipients');
 		});
-
-		it('should not confuse local and remote recipients');
 
 		describe('#open', function () {
 			var pipeFrameUri = localContextUri.replace('test.html', 'fixtures/pipeframe.html');
 
 			it('should open pipe with default name and load external frame', function (done) {
-				var framesCount = window.frames.length,
+				var wFrames = window.frames,
+					framesCount = wFrames.length,
 					p = pipe.open(pipeFrameUri),
-					wFrames,
 					frame;
 
 				expect(p.name).to.equal('default');
 				expect(p.context).to.be.an('undefined');
-
-				wFrames = window.frames;
 				expect(wFrames.length).to.equal(framesCount + 1);
 
 				frame = wFrames[framesCount];
@@ -62,7 +65,16 @@ define(function (require) {
 				}));
 			});
 
-			it('should reuse existing frame');
+			it('should reuse existing frame', function () {
+				var wFrames = window.frames,
+					p1 = pipe.open(pipeFrameUri),
+					framesCount = wFrames.length,
+					p2 = pipe.open(pipeFrameUri),
+					frame;
+
+				expect(wFrames.length).to.equal(framesCount);
+				expect(p1).to.equal(p2);
+			});
 
 			it('should queue messages and send when remote dispatcher is ready', function (done) {
 				var remoteUri = localContextUri.replace('test.html', 'fixtures/logframe.html'),
@@ -149,13 +161,17 @@ define(function (require) {
 
 		describe('#_expandPipeUri', function () {
 			it('should expand local name', function () {
-				expect(pipe._expandPipeUri('default').toString())
-					.to.equal(localContextUri + '#default');
+				var pipeUri = pipe._expandPipeUri('default');
+				expect(pipeUri.toString()).to.equal('default');
+				expect(pipeUri.name).to.equal('default');
+				expect(pipeUri.contextUri).to.equal(null);
 			});
 
 			it('should fill default target', function () {
-				expect(pipe._expandPipeUri('http://www.example.com/').toString())
+				var pipeLocation = pipe._expandPipeUri('http://www.example.com/');
+				expect(pipeLocation.toString())
 					.to.equal('http://www.example.com/#default');
+				expect(pipeLocation.name).to.equal('default');
 			});
 
 			it('should expand protocolless uri', function () {
