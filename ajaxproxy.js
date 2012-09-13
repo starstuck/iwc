@@ -1,5 +1,5 @@
-/*!
- * iwc 0.1.0 - A Inter-Window/Worker Communication suite.
+/**
+ * @preserve iwc 0.1.0 - A Inter-Window/Worker Communication suite.
  * Available via MIT license.
  * See http://github.com/szarsti/iwc for details.
  *
