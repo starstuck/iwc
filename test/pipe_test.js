@@ -5,7 +5,8 @@ define(function (require) {
 	"use strict";
 
 	var helpers = require('./helpers'),
-		pipe = require('../lib/pipe');
+		pipe = require('../lib/pipe'),
+		loc = window.location;
 
 	describe('pipe', function () {
 
