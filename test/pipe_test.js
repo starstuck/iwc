@@ -12,7 +12,7 @@ define(function (require) {
 		var localContextUri = window.location.toString().replace(/#.*$/, '');
 
 		describe('MessagePipe', function () {
-			it('should send message to default recipient', function (done) {
+			it('should send simple message to recipient', function (done) {
 				var frame = helpers.setupFrame(
 					['../lib/pipe.js'],
 					function (pipe) {
@@ -103,18 +103,12 @@ define(function (require) {
 
 		describe('#_decodeMessage', function () {
 
-			it('should fail on unrecognised message format', function (done) {
-				try {
+			it('should fail on unrecognised message format', function () {
+				expect(function () {
 					pipe._decodeMessage('Some message');
-				} catch (err) {
-					if (err.type === 'MessageDecodingError') {
-						done();
-					} else {
-						done(err);
-					}
-				} finally {
-					done("Expected to fail");
-				}
+				}).to.throwException(function (err) {
+					expect(err.type).to.equal('MessageDecodingError');
+				});
 			});
 
 			it('should decode encoded string value', function () {
@@ -165,6 +159,7 @@ define(function (require) {
 				expect(pipeUri.toString()).to.equal('default');
 				expect(pipeUri.name).to.equal('default');
 				expect(pipeUri.contextUri).to.equal(null);
+				expect(pipeUri.origin).to.contain(window.location.host);
 			});
 
 			it('should fill default target', function () {
@@ -172,11 +167,14 @@ define(function (require) {
 				expect(pipeLocation.toString())
 					.to.equal('http://www.example.com/#default');
 				expect(pipeLocation.name).to.equal('default');
+				expect(pipeLocation.origin).to.equal('http://www.example.com');
 			});
 
 			it('should expand protocolless uri', function () {
-				expect(pipe._expandPipeUri('//www.example.com/').toString())
+				var pipeLocation = pipe._expandPipeUri('//www.example.com/');
+				expect(pipeLocation.toString())
 					.to.equal(window.location.protocol + '//www.example.com/#default');
+				expect(pipeLocation.origin).to.equal(window.location.protocol + '//www.example.com');
 			});
 
 			it('should recognise parts in full uri ', function () {
@@ -184,6 +182,7 @@ define(function (require) {
 				expect(pipeUri.toString()).to.equal('http://www.example.com/#custompipe');
 				expect(pipeUri.contextUri).to.equal('http://www.example.com/');
 				expect(pipeUri.name).to.equal('custompipe');
+				expect(pipeUri.origin).to.equal('http://www.example.com');
 			});
 
 			it('should recognise hostless absolute path');
