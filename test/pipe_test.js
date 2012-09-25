@@ -160,7 +160,7 @@ define(function (require) {
 				expect(pipeUri.toString()).to.equal('default');
 				expect(pipeUri.name).to.equal('default');
 				expect(pipeUri.contextUri).to.equal(null);
-				expect(pipeUri.origin).to.contain(window.location.host);
+				expect(pipeUri.destiny).to.contain(window.location.host);
 			});
 
 			it('should fill default target', function () {
@@ -168,14 +168,14 @@ define(function (require) {
 				expect(pipeLocation.toString())
 					.to.equal('http://www.example.com/#default');
 				expect(pipeLocation.name).to.equal('default');
-				expect(pipeLocation.origin).to.equal('http://www.example.com');
+				expect(pipeLocation.destiny).to.equal('http://www.example.com');
 			});
 
 			it('should expand protocolless uri', function () {
 				var pipeLocation = pipe._expandPipeUri('//www.example.com/');
 				expect(pipeLocation.toString())
 					.to.equal(window.location.protocol + '//www.example.com/#default');
-				expect(pipeLocation.origin).to.equal(window.location.protocol + '//www.example.com');
+				expect(pipeLocation.destiny).to.equal(window.location.protocol + '//www.example.com');
 			});
 
 			it('should recognise parts in full uri ', function () {
@@ -183,7 +183,7 @@ define(function (require) {
 				expect(pipeUri.toString()).to.equal('http://www.example.com/#custompipe');
 				expect(pipeUri.contextUri).to.equal('http://www.example.com/');
 				expect(pipeUri.name).to.equal('custompipe');
-				expect(pipeUri.origin).to.equal('http://www.example.com');
+				expect(pipeUri.destiny).to.equal('http://www.example.com');
 			});
 
 			it('should recognise hostless absolute path');

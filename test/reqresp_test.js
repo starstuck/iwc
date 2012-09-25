@@ -127,11 +127,12 @@ define(function (require) {
 
 		describe('ResponderEndPoint', function () {
 			var dummyResponder,
-				pipeOut = '';
+				pipeOut = '',
+				responsePipe;
 
 			before(function () {
 				dummyResponder = reqresp.openResponder('dummy', null);
-				dummyResponder.pipe = {
+				responsePipe = {
 					send: function (msg) {
 						pipeOut += msg.d;
 						if (this.onSend) {
@@ -139,10 +140,14 @@ define(function (require) {
 						}
 					}
 				};
+				dummyResponder.getResponsePipe = function () {
+					return responsePipe;
+				};
 			});
 
 			after(function () {
 				dummyResponder = null;
+				responsePipe = null;
 			});
 
 			afterEach(function () {
@@ -154,7 +159,7 @@ define(function (require) {
 					dummyResponder.handler = function (data) {
 						return data + ' Pong!';
 					};
-					dummyResponder.handleRequest({c: 1, d: 'Ping'});
+					dummyResponder.handleRequest({c: 1, d: 'Ping'}, {});
 					expect(pipeOut).to.equal('Ping Pong!');
 				});
 
@@ -162,11 +167,11 @@ define(function (require) {
 					dummyResponder.handler = function (data) {
 						return data + ' Pong!';
 					};
-					dummyResponder.pipe.onSend = function () {
+					responsePipe.onSend = function () {
 						expect(pipeOut).to.equal('Ping Pong!');
 						done();
 					};
-					dummyResponder.handleRequest({c: 1, d: 'Ping'});
+					dummyResponder.handleRequest({c: 1, d: 'Ping'}, {});
 				});
 			});
 		});
